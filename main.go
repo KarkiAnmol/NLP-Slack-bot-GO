@@ -25,6 +25,16 @@ func main() {
 	godotenv.Load(".env")
 	bot := slacker.NewClient(os.Getenv("SLACK_BOT_TOKEN"), os.Getenv("SLACK_APP_TOKEN"))
 	go printCommandEvents(bot.CommandEvents())
+
+	bot.Command("query - <message>", &slacker.CommandDefinition{
+		Description: "Send any question to wolfram",
+		Examples:    []string{"who was the president of Nepal in 2017?"},
+		Handler: func(bc slacker.BotContext, r slacker.Request, w slacker.ResponseWriter) {
+			query := r.Param("message")
+			fmt.Println(query)
+			w.Reply("recieved")
+		},
+	})
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	err := bot.Listen(ctx)
